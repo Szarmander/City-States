@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { useState, createContext, useContext } from 'react'
+import { useState, createContext } from 'react'
 import { Home } from './components/Home'
 import { Room } from './components/Room'
 import { AudioPlayer } from './components/AudioPlayer'
 import './App.css'
 
 export const MusicContext = createContext({
-  setTrack: (track: 'lobby' | 'playing' | 'danger' | 'none') => {}
+  setTrack: (_track: 'lobby' | 'playing' | 'danger' | 'none') => {}
 });
 
 function App() {

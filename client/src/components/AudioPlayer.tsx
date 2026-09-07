@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 type Track = 'lobby' | 'playing' | 'danger' | 'none';
 
@@ -66,7 +66,7 @@ export function AudioPlayer({ currentTrack, musicPlaying }: AudioPlayerProps) {
       
       const playPromise = newAudio.play();
       if (playPromise !== undefined) {
-        playPromise.catch(e => {
+        playPromise.catch(_e => {
           console.warn("Autoplay prevented, waiting for interaction");
           const playOnInteract = () => {
             newAudio.play();

@@ -17,7 +17,7 @@ const pageVariants = {
   out: { opacity: 0, y: -50, scale: 0.95 }
 };
 
-const pageTransition = {
+const pageTransition: any = {
   type: "spring",
   stiffness: 300,
   damping: 25
