@@ -1,0 +1,36 @@
+export type Player = {
+  id: string;
+  name: string;
+  avatar: string;
+  score: number;
+  isReady: boolean;
+  answers: Record<string, string>;
+  hasStopped: boolean;
+};
+
+export type GameState = {
+  status: "lobby" | "roulette" | "playing" | "scoring" | "finished";
+  players: Record<string, Player>;
+  adminId: string | null;
+  categories: string[];
+  proposedCategories: string[];
+  currentLetter: string;
+  roundTimer: number | null; // Timestamp (ms) when round ends due to stop, or null
+  roundNumber: number;
+  maxRounds: number;
+};
+
+export type ClientMessage = 
+  | { type: "join"; name: string; avatar: string }
+  | { type: "start_game" }
+  | { type: "submit_answers"; answers: Record<string, string> }
+  | { type: "stop_round" }
+  | { type: "next_round" }
+  | { type: "propose_category"; category: string }
+  | { type: "handle_proposal"; category: string; accept: boolean }
+  | { type: "add_category"; category: string }
+  | { type: "remove_category"; category: string };
+
+export type ServerMessage = 
+  | { type: "state_update"; state: GameState }
+  | { type: "error"; message: string };
