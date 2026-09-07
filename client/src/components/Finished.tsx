@@ -7,7 +7,7 @@ interface FinishedProps {
 }
 
 export function Finished({ state, amAdmin, onRestart }: FinishedProps) {
-  const sortedPlayers = Object.values(state.players).sort((a,b) => b.score - a.score);
+  const sortedPlayers = Object.values(state.players).sort((a,b) => (b.score + b.roundScore) - (a.score + a.roundScore));
 
   return (
     <div className="card panel-card finished-card">
@@ -30,7 +30,7 @@ export function Finished({ state, amAdmin, onRestart }: FinishedProps) {
               )}
             </div>
             <div className="place-name">{p.name}</div>
-            <div className="place-score">{p.score} pts</div>
+            <div className="place-score">{p.score + (p.roundScore || 0)} pts</div>
           </div>
         ))}
       </div>

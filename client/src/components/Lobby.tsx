@@ -11,9 +11,10 @@ interface LobbyProps {
   onHandleProposal: (cat: string, accept: boolean) => void;
   onAddCategory: (cat: string) => void;
   onRemoveCategory: (cat: string) => void;
+  onSetMaxRounds: (max: number) => void;
 }
 
-export function Lobby({ state, amAdmin, roomId, onStart, onPropose, onHandleProposal, onAddCategory, onRemoveCategory }: LobbyProps) {
+export function Lobby({ state, amAdmin, roomId, onStart, onPropose, onHandleProposal, onAddCategory, onRemoveCategory, onSetMaxRounds }: LobbyProps) {
   const [newCat, setNewCat] = useState('');
 
   const handleAddOrPropose = () => {
@@ -30,7 +31,21 @@ export function Lobby({ state, amAdmin, roomId, onStart, onPropose, onHandleProp
     <div className="card panel-card">
       <div className="panel-header">
         <h2>Room Code: <span className="highlight-text">{roomId}</span></h2>
-        <div className="round-info">Round: {state.roundNumber}/{state.maxRounds}</div>
+        <div className="round-info" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          Round: {state.roundNumber}/
+          {amAdmin ? (
+            <input 
+              type="number" 
+              value={state.maxRounds} 
+              onChange={e => onSetMaxRounds(parseInt(e.target.value) || 1)}
+              style={{ width: '50px', borderRadius: '8px', border: 'none', padding: '0.2rem', fontWeight: 'bold', textAlign: 'center' }}
+              min="1"
+              max="20"
+            />
+          ) : (
+            state.maxRounds
+          )}
+        </div>
       </div>
 
       <div className="lobby-content">

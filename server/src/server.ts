@@ -18,6 +18,8 @@ export default class CityStateServer implements Party.Server {
       roundTimer: null,
       roundNumber: 0,
       maxRounds: 5,
+      reportedAnswers: [],
+      invalidatedAnswers: [],
     };
   }
 
@@ -41,6 +43,7 @@ export default class CityStateServer implements Party.Server {
           name: data.name,
           avatar: data.avatar,
           score: 0,
+          roundScore: 0,
           isReady: false,
           answers: {},
           hasStopped: false,
@@ -114,6 +117,37 @@ export default class CityStateServer implements Party.Server {
         break;
       }
 
+      case "set_max_rounds": {
+        if (sender.id === this.state.adminId && this.state.status === "lobby") {
+          this.state.maxRounds = Math.max(1, data.maxRounds);
+          this.broadcastState();
+        }
+        break;
+      }
+
+      case "report_answer": {
+        if (this.state.status === "scoring") {
+          const exists = this.state.reportedAnswers.find(r => r.playerId === data.playerId && r.category === data.category);
+          if (!exists) {
+            this.state.reportedAnswers.push({ playerId: data.playerId, category: data.category });
+            this.broadcastState();
+          }
+        }
+        break;
+      }
+
+      case "invalidate_answer": {
+        if (sender.id === this.state.adminId && this.state.status === "scoring") {
+          const exists = this.state.invalidatedAnswers.find(i => i.playerId === data.playerId && i.category === data.category);
+          if (!exists) {
+            this.state.invalidatedAnswers.push({ playerId: data.playerId, category: data.category });
+            this.calculateRoundScores();
+            this.broadcastState();
+          }
+        }
+        break;
+      }
+
       case "stop_round": {
         if (this.state.status === "playing") {
           this.state.players[sender.id].hasStopped = true;
@@ -155,8 +189,12 @@ export default class CityStateServer implements Party.Server {
   startNewRound() {
     this.state.status = "roulette";
     this.state.roundTimer = null;
+    this.state.reportedAnswers = [];
+    this.state.invalidatedAnswers = [];
     this.state.currentLetter = LETTERS[Math.floor(Math.random() * LETTERS.length)];
     for (const p of Object.values(this.state.players)) {
+      p.score += p.roundScore;
+      p.roundScore = 0;
       p.answers = {};
       p.hasStopped = false;
     }
@@ -175,9 +213,18 @@ export default class CityStateServer implements Party.Server {
   endRound() {
     if (this.state.status !== "playing") return;
     this.state.status = "scoring";
-    
+    this.calculateRoundScores();
+    this.broadcastState();
+  }
+
+  calculateRoundScores() {
     const letter = this.state.currentLetter.toLowerCase();
     
+    // Reset round scores
+    for (const p of Object.values(this.state.players)) {
+      p.roundScore = 0;
+    }
+
     // Evaluate scores per category
     for (const cat of this.state.categories) {
       const validAnswers: { playerId: string, answer: string }[] = [];
@@ -185,7 +232,10 @@ export default class CityStateServer implements Party.Server {
       // Step 1: Collect valid answers
       for (const player of Object.values(this.state.players)) {
         const answer = player.answers[cat]?.trim().toLowerCase() || "";
-        if (answer && answer.startsWith(letter)) {
+        const isInvalidated = this.state.invalidatedAnswers.some(i => i.playerId === player.id && i.category === cat);
+        
+        // Ensure answer is valid, starts with letter, length > 1, and not explicitly invalidated
+        if (answer && answer.startsWith(letter) && answer.length > 1 && !isInvalidated) {
           validAnswers.push({ playerId: player.id, answer });
         }
       }
@@ -193,21 +243,19 @@ export default class CityStateServer implements Party.Server {
       // Step 2: Assign points
       if (validAnswers.length === 1) {
         // Only one person has a valid answer
-        this.state.players[validAnswers[0].playerId].score += 15;
+        this.state.players[validAnswers[0].playerId].roundScore += 15;
       } else if (validAnswers.length > 1) {
         // Multiple valid answers, check for uniqueness
         for (const va of validAnswers) {
           const isUnique = validAnswers.filter(x => x.answer === va.answer).length === 1;
           if (isUnique) {
-            this.state.players[va.playerId].score += 10;
+            this.state.players[va.playerId].roundScore += 10;
           } else {
-            this.state.players[va.playerId].score += 5;
+            this.state.players[va.playerId].roundScore += 5;
           }
         }
       }
     }
-    
-    this.broadcastState();
   }
 
   broadcastState() {

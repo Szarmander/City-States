@@ -128,6 +128,10 @@ export function Room() {
     socket.send(JSON.stringify({ type: 'remove_category', category: cat } as ClientMessage))
   }
 
+  const setMaxRounds = (max: number) => {
+    socket.send(JSON.stringify({ type: 'set_max_rounds', maxRounds: max } as ClientMessage))
+  }
+
   return (
     <div className="room-container">
       <AnimatePresence mode="wait">
@@ -143,6 +147,7 @@ export function Room() {
               onHandleProposal={handleProposal}
               onAddCategory={addCategory}
               onRemoveCategory={removeCategory}
+              onSetMaxRounds={setMaxRounds}
             />
           </motion.div>
         )}
@@ -171,7 +176,10 @@ export function Room() {
             <Scoring 
               state={state} 
               amAdmin={amAdmin} 
+              meId={me?.id}
               onNextRound={nextRound} 
+              onReport={(playerId, category) => socket.send(JSON.stringify({ type: 'report_answer', playerId, category } as ClientMessage))}
+              onInvalidate={(playerId, category) => socket.send(JSON.stringify({ type: 'invalidate_answer', playerId, category } as ClientMessage))}
             />
           </motion.div>
         )}
