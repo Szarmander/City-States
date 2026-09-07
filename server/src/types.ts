@@ -35,7 +35,8 @@ export type ClientMessage =
   | { type: "remove_category"; category: string }
   | { type: "set_max_rounds"; maxRounds: number }
   | { type: "report_answer"; playerId: string; category: string }
-  | { type: "invalidate_answer"; playerId: string; category: string };
+  | { type: "invalidate_answer"; playerId: string; category: string }
+  | { type: "toggle_ready" };
 
 export type ServerMessage = 
   | { type: "state_update"; state: GameState }

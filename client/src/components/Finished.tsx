@@ -4,9 +4,10 @@ interface FinishedProps {
   state: GameState;
   amAdmin: boolean;
   onRestart: () => void;
+  onQuit: () => void;
 }
 
-export function Finished({ state, amAdmin, onRestart }: FinishedProps) {
+export function Finished({ state, amAdmin, onRestart, onQuit }: FinishedProps) {
   const sortedPlayers = Object.values(state.players).sort((a,b) => (b.score + b.roundScore) - (a.score + a.roundScore));
 
   return (
@@ -37,9 +38,15 @@ export function Finished({ state, amAdmin, onRestart }: FinishedProps) {
 
       <div className="finished-actions">
         {amAdmin ? (
-          <button className="btn btn-primary btn-large" onClick={onRestart}>Play Again</button>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <button className="btn btn-primary btn-large" onClick={onRestart}>Play Again</button>
+            <button className="btn btn-danger btn-large" onClick={onQuit}>Quit</button>
+          </div>
         ) : (
-          <div className="waiting-text">Waiting for admin to restart...</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+            <div className="waiting-text">Waiting for admin to restart...</div>
+            <button className="btn btn-danger" onClick={onQuit}>Quit</button>
+          </div>
         )}
       </div>
     </div>

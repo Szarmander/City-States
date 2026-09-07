@@ -148,6 +148,7 @@ export function Room() {
               onAddCategory={addCategory}
               onRemoveCategory={removeCategory}
               onSetMaxRounds={setMaxRounds}
+              onToggleReady={() => socket.send(JSON.stringify({ type: 'toggle_ready' } as ClientMessage))}
             />
           </motion.div>
         )}
@@ -190,6 +191,7 @@ export function Room() {
               state={state} 
               amAdmin={amAdmin} 
               onRestart={startGame} 
+              onQuit={() => navigate('/')}
             />
           </motion.div>
         )}

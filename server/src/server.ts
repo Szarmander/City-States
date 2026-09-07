@@ -99,10 +99,13 @@ export default class CityStateServer implements Party.Server {
       }
 
       case "start_game": {
-        const playerCount = Object.keys(this.state.players).length;
-        if (playerCount >= 2 && sender.id === this.state.adminId && (this.state.status === "lobby" || this.state.status === "finished")) {
+        const players = Object.values(this.state.players);
+        const playerCount = players.length;
+        const nonAdmins = players.filter(p => p.id !== this.state.adminId);
+        const allReady = nonAdmins.length === 0 || nonAdmins.every(p => p.isReady);
+        if (playerCount >= 2 && allReady && sender.id === this.state.adminId && (this.state.status === "lobby" || this.state.status === "finished")) {
           this.state.roundNumber = 1;
-          for (const p of Object.values(this.state.players)) {
+          for (const p of players) {
             p.score = 0;
           }
           this.startNewRound();
@@ -144,6 +147,14 @@ export default class CityStateServer implements Party.Server {
             this.calculateRoundScores();
             this.broadcastState();
           }
+        }
+        break;
+      }
+
+      case "toggle_ready": {
+        if (this.state.status === "lobby" && this.state.players[sender.id]) {
+          this.state.players[sender.id].isReady = !this.state.players[sender.id].isReady;
+          this.broadcastState();
         }
         break;
       }
