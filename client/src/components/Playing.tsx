@@ -1,4 +1,7 @@
+import { useContext } from 'react'
 import { GameState, Player } from '../types'
+import { LanguageContext } from '../App'
+import { translateCategory } from '../i18n'
 
 interface PlayingProps {
   state: GameState;
@@ -10,11 +13,13 @@ interface PlayingProps {
 }
 
 export function Playing({ state, me, timeLeft, answers, onAnswerChange, onStop }: PlayingProps) {
+  const { t, lang } = useContext(LanguageContext);
+
   return (
     <div className="playing-layout">
       {/* SIDEBAR */}
       <div className="card panel-card playing-sidebar">
-        <h3>Players</h3>
+        <h3>{t.playersInRoom}</h3>
         <div className="sidebar-players">
           {Object.values(state.players).map(p => (
             <div key={p.id} className={`sidebar-player-pill ${p.hasStopped ? 'stopped' : ''}`}>
@@ -36,7 +41,7 @@ export function Playing({ state, me, timeLeft, answers, onAnswerChange, onStop }
       <div className="card panel-card playing-card">
         <div className="playing-header">
           <div className="letter-display">
-            <span>Letter:</span>
+            <span>{t.letter}</span>
             <div className="big-letter">{state.currentLetter}</div>
           </div>
           
@@ -50,7 +55,7 @@ export function Playing({ state, me, timeLeft, answers, onAnswerChange, onStop }
         <div className="categories-inputs">
           {state.categories.map(cat => (
             <div key={cat} className="category-input-group">
-              <label>{cat}</label>
+              <label>{translateCategory(cat, lang)}</label>
               <input 
                 className="main-input game-input"
                 value={answers[cat] || ''} 
@@ -68,7 +73,7 @@ export function Playing({ state, me, timeLeft, answers, onAnswerChange, onStop }
             onClick={onStop} 
             disabled={me?.hasStopped}
           >
-            {me?.hasStopped ? 'Waiting for others...' : 'STOP!'}
+            {me?.hasStopped ? t.waitingForOthers : t.stop}
           </button>
         </div>
       </div>

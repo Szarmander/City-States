@@ -1,4 +1,6 @@
+import { useContext } from 'react'
 import { GameState } from '../types'
+import { LanguageContext } from '../App'
 
 interface FinishedProps {
   state: GameState;
@@ -9,12 +11,13 @@ interface FinishedProps {
 
 export function Finished({ state, amAdmin, onRestart, onQuit }: FinishedProps) {
   const sortedPlayers = Object.values(state.players).sort((a,b) => (b.score + b.roundScore) - (a.score + a.roundScore));
+  const { t } = useContext(LanguageContext);
 
   return (
     <div className="card panel-card finished-card">
       <div className="panel-header text-center">
-        <h2 className="title">Game Finished!</h2>
-        <p>Final Standings</p>
+        <h2 className="title">{t.gameFinished}</h2>
+        <p>{t.finalStandings}</p>
       </div>
 
       <div className="podium">
@@ -39,13 +42,13 @@ export function Finished({ state, amAdmin, onRestart, onQuit }: FinishedProps) {
       <div className="finished-actions">
         {amAdmin ? (
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-            <button className="btn btn-primary btn-large" onClick={onRestart}>Play Again</button>
-            <button className="btn btn-danger btn-large" onClick={onQuit}>Quit</button>
+            <button className="btn btn-primary btn-large" onClick={onRestart}>{t.playAgain}</button>
+            <button className="btn btn-danger btn-large" onClick={onQuit}>{t.quit}</button>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
-            <div className="waiting-text">Waiting for admin to restart...</div>
-            <button className="btn btn-danger" onClick={onQuit}>Quit</button>
+            <div className="waiting-text">{t.waitingToRestart}</div>
+            <button className="btn btn-danger" onClick={onQuit}>{t.quit}</button>
           </div>
         )}
       </div>

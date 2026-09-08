@@ -651,3 +651,33 @@
 .table-container {
   max-width: 100%;
 }
+
+button, input, select {
+  touch-action: manipulation;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  opacity: 0.7 !important;
+}
+
+.remove-cat-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 0.5rem;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { GameState, Player } from '../types'
+import { LanguageContext } from '../App'
+import { translateCategory, canonicalizeCategory } from '../i18n'
 
 interface LobbyProps {
   state: GameState;
@@ -17,13 +19,15 @@ interface LobbyProps {
 
 export function Lobby({ state, amAdmin, me, roomId, onStart, onPropose, onHandleProposal, onAddCategory, onRemoveCategory, onSetMaxRounds, onToggleReady }: LobbyProps) {
   const [newCat, setNewCat] = useState('');
+  const { t, lang } = useContext(LanguageContext);
 
   const handleAddOrPropose = () => {
     if (!newCat.trim()) return;
+    const canonical = canonicalizeCategory(newCat.trim());
     if (amAdmin) {
-      onAddCategory(newCat.trim());
+      onAddCategory(canonical);
     } else {
-      onPropose(newCat.trim());
+      onPropose(canonical);
     }
     setNewCat('');
   }
@@ -35,9 +39,9 @@ export function Lobby({ state, amAdmin, me, roomId, onStart, onPropose, onHandle
   return (
     <div className="card panel-card">
       <div className="panel-header">
-        <h2>Room Code: <span className="highlight-text">{roomId}</span></h2>
+        <h2>{t.roomCode}: <span className="highlight-text">{roomId}</span></h2>
         <div className="round-info" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          Round: {state.roundNumber} /
+          {t.round}: {state.roundNumber} /
           {amAdmin ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'rgba(255,255,255,0.2)', padding: '0.2rem', borderRadius: '8px' }}>
               <button 
@@ -62,7 +66,7 @@ export function Lobby({ state, amAdmin, me, roomId, onStart, onPropose, onHandle
 
       <div className="lobby-content">
         <div className="players-section">
-          <h3>Players in Room</h3>
+          <h3>{t.playersInRoom}</h3>
           <ul className="player-grid">
             {Object.values(state.players).map(p => {
               const isAdmin = p.id === state.adminId;
@@ -78,7 +82,7 @@ export function Lobby({ state, amAdmin, me, roomId, onStart, onPropose, onHandle
                   <span className="player-name">
                     {p.name} {!isAdmin && (p.isReady ? '✅' : '⏳')}
                   </span>
-                  {isAdmin && <span className="badge badge-admin">Admin</span>}
+                  {isAdmin && <span className="badge badge-admin">{t.admin}</span>}
                 </li>
               )
             })}
@@ -86,12 +90,16 @@ export function Lobby({ state, amAdmin, me, roomId, onStart, onPropose, onHandle
         </div>
         
         <div className="categories-section">
-          <h3>Categories for this game:</h3>
+          <h3>{t.categoriesForGame}</h3>
           <div className="category-tags">
             {state.categories.map(c => (
-              <span key={c} className="badge badge-category">
-                {c}
-                {amAdmin && <button className="remove-cat-btn" onClick={() => onRemoveCategory(c)}>x</button>}
+              <span key={c} className="badge badge-category" style={{ display: 'flex', alignItems: 'center' }}>
+                {translateCategory(c, lang)}
+                {amAdmin && (
+                  <button className="remove-cat-btn" onClick={() => onRemoveCategory(c)} title="Remove Category">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  </button>
+                )}
               </span>
             ))}
           </div>
@@ -99,24 +107,24 @@ export function Lobby({ state, amAdmin, me, roomId, onStart, onPropose, onHandle
           <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <input 
               className="main-input" 
-              placeholder="Custom category..." 
+              placeholder={t.customCategory} 
               value={newCat} 
               onChange={e => setNewCat(e.target.value)} 
               style={{ maxWidth: '250px' }}
               onKeyDown={e => e.key === 'Enter' && handleAddOrPropose()}
             />
             <button className="btn btn-secondary" onClick={handleAddOrPropose}>
-              {amAdmin ? 'Add' : 'Suggest'}
+              {amAdmin ? t.add : t.suggest}
             </button>
           </div>
 
           {amAdmin && state.proposedCategories.length > 0 && (
             <div style={{ marginTop: '1.5rem', background: '#fff', padding: '1rem', borderRadius: '12px', border: '2px dashed var(--border-color)' }}>
-              <h4>Suggestions from players:</h4>
+              <h4>{t.suggestions}</h4>
               <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
                 {state.proposedCategories.map(c => (
                   <div key={c} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#f0f4ff', padding: '0.5rem 1rem', borderRadius: '8px' }}>
-                    <strong>{c}</strong>
+                    <strong>{translateCategory(c, lang)}</strong>
                     <button className="btn btn-success btn-small" onClick={() => onHandleProposal(c, true)}>✓</button>
                     <button className="btn btn-danger btn-small" onClick={() => onHandleProposal(c, false)}>x</button>
                   </div>
@@ -133,7 +141,7 @@ export function Lobby({ state, amAdmin, me, roomId, onStart, onPropose, onHandle
             className={`btn btn-large ${me?.isReady ? 'btn-success' : 'btn-secondary'}`}
             onClick={onToggleReady}
           >
-            {me?.isReady ? "I'm Ready!" : "Click when Ready"}
+            {me?.isReady ? t.imReady : t.clickWhenReady}
           </button>
         )}
 
@@ -144,16 +152,16 @@ export function Lobby({ state, amAdmin, me, roomId, onStart, onPropose, onHandle
               onClick={onStart}
               disabled={notEnoughPlayers || !allReady}
             >
-              START GAME!
+              {t.startGame}
             </button>
             {notEnoughPlayers ? (
-              <span style={{ color: 'var(--danger)', fontWeight: 'bold' }}>Need at least 2 players to start!</span>
+              <span style={{ color: 'var(--danger)', fontWeight: 'bold', textAlign: 'center' }}>{t.needMorePlayers}</span>
             ) : !allReady ? (
-              <span style={{ color: 'var(--danger)', fontWeight: 'bold' }}>Waiting for all players to be ready!</span>
+              <span style={{ color: 'var(--danger)', fontWeight: 'bold', textAlign: 'center' }}>{t.waitingForReady}</span>
             ) : null}
           </div>
         ) : (
-          <div className="waiting-text">Waiting for the admin to start...</div>
+          <div className="waiting-text">{t.waitingForAdmin}</div>
         )}
       </div>
     </div>
