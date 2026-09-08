@@ -92,7 +92,7 @@ export const translations = {
 export function getInitialLanguage(): Language {
   const saved = localStorage.getItem('language') as Language;
   if (saved === 'en' || saved === 'pl') return saved;
-  const userLang = navigator.language || navigator.userLanguage;
+  const userLang = navigator.language;
   if (userLang && userLang.toLowerCase().startsWith('pl')) return 'pl';
   return 'en';
 }
