@@ -13,7 +13,7 @@ const AVATARS = [
 ]
 
 const ACCESSORIES = [
-  '', 'bow_tie.png', 'crown.png', 'funny_glasses.png', 'hat.png', 'mustache.png'
+  '', 'bow_tie.png', 'crown.png', 'hat.png', 'mustache.png'
 ]
 
 export function Home() {
