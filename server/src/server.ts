@@ -42,6 +42,7 @@ export default class CityStateServer implements Party.Server {
           id: sender.id,
           name: data.name,
           avatar: data.avatar,
+          accessory: data.accessory,
           score: 0,
           roundScore: 0,
           isReady: false,

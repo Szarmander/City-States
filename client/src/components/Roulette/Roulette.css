@@ -1,0 +1,3 @@
+
+.roulette-letter { font-family: 'Baloo 2', cursive; font-size: 6rem; color: var(--info); text-shadow: 3px 3px 0px var(--border-color); margin: 2rem 0; }
+.roulette-done { color: var(--danger); transform: scale(1.2); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }

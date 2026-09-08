@@ -1,3 +1,4 @@
+import './Roulette.css';
 import { useState, useEffect, useRef } from 'react'
 
 const LETTERS = "ABCDEFGHIJKLMNOPRSTUWZ".split("");

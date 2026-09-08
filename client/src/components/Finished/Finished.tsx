@@ -1,6 +1,7 @@
+import './Finished.css';
 import { useContext } from 'react'
-import { GameState } from '../types'
-import { LanguageContext } from '../App'
+import { GameState } from '../../types'
+import { LanguageContext } from '../../App'
 
 interface FinishedProps {
   state: GameState;
@@ -26,9 +27,14 @@ export function Finished({ state, amAdmin, onRestart, onQuit }: FinishedProps) {
             <div className="place-medal">
               {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}th`}
             </div>
-            <div className="avatar-circle small-avatar" style={{ margin: '0 1rem' }}>
+            <div className="avatar-circle small-avatar" style={{ margin: '0 1rem', position: 'relative' }}>
               {p.avatar ? (
-                <img src={`/avatars/${p.avatar}`} alt="avatar" className="avatar-img" />
+                <>
+                  <img src={`/avatars/${p.avatar}`} alt="avatar" className="avatar-img" />
+                  {p.accessory && (
+                    <img src={`/accessories/${p.accessory}`} alt="accessory" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />
+                  )}
+                </>
               ) : (
                 p.name.substring(0,2).toUpperCase()
               )}

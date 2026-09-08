@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useState, createContext } from 'react'
-import { Home } from './components/Home'
-import { Room } from './components/Room'
-import { AudioPlayer } from './components/AudioPlayer'
+import { Home } from './components/Home/Home'
+import { Room } from './components/Room/Room'
+import { AudioPlayer } from './components/AudioPlayer/AudioPlayer'
 import { Language, translations, getInitialLanguage } from './i18n'
 import './App.css'
 

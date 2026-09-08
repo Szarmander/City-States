@@ -1,0 +1,10 @@
+
+.finished-card { max-width: 600px; }
+.podium { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem; }
+.podium-place { display: flex; align-items: center; gap: 1.5rem; background: white; border: 3px solid var(--border-color); border-radius: 16px; padding: 1rem 2rem; box-shadow: 4px 4px 0px var(--border-color); }
+.place-1 { background-color: #fff8d6; transform: scale(1.05); }
+.place-2 { background-color: #f0f4ff; }
+.place-3 { background-color: #fff0f5; }
+.place-medal { font-size: 2.5rem; }
+.place-name { flex: 1; font-family: 'Baloo 2', cursive; font-size: 1.8rem; text-align: left; }
+.place-score { font-weight: 900; font-size: 1.5rem; color: var(--danger); }

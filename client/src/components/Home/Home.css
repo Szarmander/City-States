@@ -1,0 +1,6 @@
+
+.home-card { max-width: 500px; }
+.avatar-selector { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem; }
+.avatar-bubble { width: 140px; height: 140px; border-radius: 50%; border: 4px solid var(--border-color); background-color: white; overflow: hidden; box-shadow: 4px 4px 0px var(--border-color); display: flex; align-items: center; justify-content: center; }
+.avatar-bubble img { width: 100%; height: 100%; object-fit: cover; }
+.accessory-selector { display: flex; align-items: center; justify-content: center; gap: 1rem; }

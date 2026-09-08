@@ -1,7 +1,8 @@
+import './Scoring.css';
 import { useContext } from 'react'
-import { GameState } from '../types'
-import { LanguageContext } from '../App'
-import { translateCategory } from '../i18n'
+import { GameState } from '../../types'
+import { LanguageContext } from '../../App'
+import { translateCategory } from '../../i18n'
 
 interface ScoringProps {
   state: GameState;

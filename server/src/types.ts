@@ -2,6 +2,7 @@ export type Player = {
   id: string;
   name: string;
   avatar: string;
+  accessory?: string;
   score: number;
   roundScore: number;
   isReady: boolean;
@@ -24,7 +25,7 @@ export type GameState = {
 };
 
 export type ClientMessage = 
-  | { type: "join"; name: string; avatar: string }
+  | { type: "join"; name: string; avatar: string; accessory?: string }
   | { type: "start_game" }
   | { type: "submit_answers"; answers: Record<string, string> }
   | { type: "stop_round" }

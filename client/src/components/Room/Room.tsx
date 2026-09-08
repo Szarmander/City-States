@@ -1,15 +1,16 @@
+import './Room.css';
 import { useState, useEffect, useContext } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import usePartySocket from 'partysocket/react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { GameState, ClientMessage } from '../types'
+import { GameState, ClientMessage } from '../../types'
 
-import { Lobby } from './Lobby'
-import { Playing } from './Playing'
-import { Scoring } from './Scoring'
-import { Finished } from './Finished'
-import { Roulette } from './Roulette'
-import { MusicContext } from '../App'
+import { Lobby } from '../Lobby/Lobby'
+import { Playing } from '../Playing/Playing'
+import { Scoring } from '../Scoring/Scoring'
+import { Finished } from '../Finished/Finished'
+import { Roulette } from '../Roulette/Roulette'
+import { MusicContext } from '../../App'
 
 const pageVariants = {
   initial: { opacity: 0, y: 50, scale: 0.95 },
@@ -46,7 +47,8 @@ export function Room() {
     },
     onOpen: () => {
       const avatar = localStorage.getItem('playerAvatar') || 'cat.jpg'
-      socket.send(JSON.stringify({ type: 'join', name, avatar } as ClientMessage))
+      const accessory = localStorage.getItem('playerAccessory') || ''
+      socket.send(JSON.stringify({ type: 'join', name, avatar, accessory } as ClientMessage))
     }
   })
 
