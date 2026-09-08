@@ -2,6 +2,7 @@ import './Home.css';
 import { useState, useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MusicContext, LanguageContext } from '../../App'
+import { ACCESSORY_STYLES } from '../../utils'
 
 const AVATARS = [
   'cat.jpg', 'duck.jpg', 'frog.jpg', 'bear.jpg', 'cow.jpg', 
@@ -54,21 +55,25 @@ export function Home() {
 
   return (
     <div className="card panel-card flex-col">
-      <div className="avatar-selector" style={{ marginBottom: '0.5rem' }}>
-        <button className="btn btn-secondary btn-small" onClick={prevAvatar} style={{ padding: '0.5rem 1rem' }}>◀</button>
-        <div className="avatar-bubble" style={{ position: 'relative' }}>
+      <div className="avatar-selector" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem', marginBottom: '1.5rem' }}>
+        
+        <div className="arrows-column" style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+          <button className="btn btn-secondary btn-small" onClick={prevAccessory} title="Previous Accessory" style={{ padding: '0.5rem 1rem' }}>◀</button>
+          <button className="btn btn-secondary btn-small" onClick={prevAvatar} title="Previous Avatar" style={{ padding: '0.5rem 1rem' }}>◀</button>
+        </div>
+
+        <div className="avatar-bubble" style={{ position: 'relative', width: '160px', height: '160px', flexShrink: 0 }}>
           <img src={`/avatars/${AVATARS[avatarIndex]}`} alt="avatar" style={{ userSelect: 'none', pointerEvents: 'none' }} />
           {ACCESSORIES[accessoryIndex] && (
-            <img src={`/accessories/${ACCESSORIES[accessoryIndex]}`} alt="accessory" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', userSelect: 'none', pointerEvents: 'none' }} />
+            <img src={`/accessories/${ACCESSORIES[accessoryIndex]}`} alt="accessory" style={{ position: 'absolute', pointerEvents: 'none', ...ACCESSORY_STYLES[ACCESSORIES[accessoryIndex]] }} />
           )}
         </div>
-        <button className="btn btn-secondary btn-small" onClick={nextAvatar} style={{ padding: '0.5rem 1rem' }}>▶</button>
-      </div>
-      
-      <div className="accessory-selector" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-        <button className="btn btn-secondary btn-small" onClick={prevAccessory} style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}>◀</button>
-        <span style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Accessory</span>
-        <button className="btn btn-secondary btn-small" onClick={nextAccessory} style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem' }}>▶</button>
+        
+        <div className="arrows-column" style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+          <button className="btn btn-secondary btn-small" onClick={nextAccessory} title="Next Accessory" style={{ padding: '0.5rem 1rem' }}>▶</button>
+          <button className="btn btn-secondary btn-small" onClick={nextAvatar} title="Next Avatar" style={{ padding: '0.5rem 1rem' }}>▶</button>
+        </div>
+
       </div>
 
       <input 

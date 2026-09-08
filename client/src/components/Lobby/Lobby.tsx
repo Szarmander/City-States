@@ -3,6 +3,7 @@ import { useState, useContext } from 'react'
 import { GameState, Player } from '../../types'
 import { LanguageContext } from '../../App'
 import { translateCategory, canonicalizeCategory } from '../../i18n'
+import { ACCESSORY_STYLES } from '../../utils'
 
 interface LobbyProps {
   state: GameState;
@@ -78,7 +79,7 @@ export function Lobby({ state, amAdmin, me, roomId, onStart, onPropose, onHandle
                       <>
                         <img src={`/avatars/${p.avatar}`} alt="avatar" className="avatar-img" />
                         {p.accessory && (
-                          <img src={`/accessories/${p.accessory}`} alt="accessory" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />
+                          <img src={`/accessories/${p.accessory}`} alt="accessory" style={{ position: 'absolute', pointerEvents: 'none', ...ACCESSORY_STYLES[p.accessory] }} />
                         )}
                       </>
                     ) : (
