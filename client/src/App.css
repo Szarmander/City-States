@@ -580,7 +580,7 @@
   border-radius: 50%;
   border: 4px solid var(--border-color);
   background-color: white;
-  overflow: hidden;
+  
   box-shadow: 4px 4px 0px var(--border-color);
   display: flex;
   align-items: center;
@@ -645,7 +645,7 @@
 .scoring-card {
   width: 100%;
   max-width: 100vw;
-  overflow: hidden;
+  
 }
 
 .table-container {

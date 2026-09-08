@@ -63,7 +63,7 @@ export function Home() {
         </div>
 
         <div className="avatar-bubble" style={{ position: 'relative', width: '160px', height: '160px', flexShrink: 0 }}>
-          <img src={`/avatars/${AVATARS[avatarIndex]}`} alt="avatar" style={{ userSelect: 'none', pointerEvents: 'none' }} />
+          <img src={`/avatars/${AVATARS[avatarIndex]}`} alt="avatar" className="avatar-img" style={{ userSelect: 'none', pointerEvents: 'none' }} />
           {ACCESSORIES[accessoryIndex] && (
             <img src={`/accessories/${ACCESSORIES[accessoryIndex]}`} alt="accessory" style={{ position: 'absolute', pointerEvents: 'none', ...ACCESSORY_STYLES[ACCESSORIES[accessoryIndex]] }} />
           )}
