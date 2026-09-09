@@ -17,6 +17,7 @@ export type GameState = {
   categories: string[];
   proposedCategories: string[];
   currentLetter: string;
+  usedLetters: string[];
   roundTimer: number | null; // Timestamp (ms) when round ends due to stop, or null
   roundNumber: number;
   maxRounds: number;

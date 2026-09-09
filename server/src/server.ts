@@ -15,12 +15,20 @@ export default class CityStateServer implements Party.Server {
       categories: ["Państwo", "Miasto", "Zwierzę", "Roślina", "Rzecz"],
       proposedCategories: [],
       currentLetter: "",
+      usedLetters: [],
       roundTimer: null,
       roundNumber: 0,
       maxRounds: 5,
       reportedAnswers: [],
       invalidatedAnswers: [],
     };
+  }
+
+  async onStart() {
+    const savedState = await this.room.storage.get<GameState>("gameState");
+    if (savedState) {
+      this.state = savedState;
+    }
   }
 
   onConnect(conn: Party.Connection, ctx: Party.ConnectionContext) {}
@@ -31,25 +39,44 @@ export default class CityStateServer implements Party.Server {
     switch (data.type) {
       case "join": {
         const playerCount = Object.keys(this.state.players).length;
-        if (playerCount >= 8 && !this.state.players[sender.id]) {
+        if (playerCount >= 8 && !this.state.players[sender.id] && !Object.values(this.state.players).some(p => p.name === data.name)) {
           const msg: ServerMessage = { type: "error", message: "Room is full (max 8 players)" };
           sender.send(JSON.stringify(msg));
           return;
         }
 
-        const isFirst = playerCount === 0;
-        this.state.players[sender.id] = {
-          id: sender.id,
-          name: data.name,
-          avatar: data.avatar,
-          accessory: data.accessory,
-          score: 0,
-          roundScore: 0,
-          isReady: false,
-          answers: {},
-          hasStopped: false,
-        };
-        if (isFirst || !this.state.adminId) {
+        const existingId = Object.keys(this.state.players).find(id => this.state.players[id].name === data.name);
+        
+        if (existingId) {
+          const existingPlayer = this.state.players[existingId];
+          existingPlayer.id = sender.id;
+          existingPlayer.avatar = data.avatar;
+          existingPlayer.accessory = data.accessory;
+          
+          this.state.players[sender.id] = existingPlayer;
+          if (existingId !== sender.id) {
+            delete this.state.players[existingId];
+            if (this.state.adminId === existingId) {
+              this.state.adminId = sender.id;
+            }
+            this.state.reportedAnswers.forEach(r => { if (r.playerId === existingId) r.playerId = sender.id; });
+            this.state.invalidatedAnswers.forEach(i => { if (i.playerId === existingId) i.playerId = sender.id; });
+          }
+        } else {
+          this.state.players[sender.id] = {
+            id: sender.id,
+            name: data.name,
+            avatar: data.avatar,
+            accessory: data.accessory,
+            score: 0,
+            roundScore: 0,
+            isReady: false,
+            answers: {},
+            hasStopped: false,
+          };
+        }
+
+        if (!this.state.adminId) {
           this.state.adminId = sender.id;
         }
         this.broadcastState();
@@ -190,10 +217,19 @@ export default class CityStateServer implements Party.Server {
   }
 
   onClose(connection: Party.Connection) {
-    delete this.state.players[connection.id];
-    if (this.state.adminId === connection.id) {
-      const remainingPlayers = Object.keys(this.state.players);
-      this.state.adminId = remainingPlayers.length > 0 ? remainingPlayers[0] : null;
+    if (this.state.status === "lobby") {
+      delete this.state.players[connection.id];
+      if (this.state.adminId === connection.id) {
+        const remainingPlayers = Object.keys(this.state.players);
+        this.state.adminId = remainingPlayers.length > 0 ? remainingPlayers[0] : null;
+      }
+    } else {
+      if (this.state.adminId === connection.id) {
+        const remainingPlayers = Object.keys(this.state.players).filter(id => id !== connection.id);
+        if (remainingPlayers.length > 0) {
+          this.state.adminId = remainingPlayers[0];
+        }
+      }
     }
     this.broadcastState();
   }
@@ -203,7 +239,15 @@ export default class CityStateServer implements Party.Server {
     this.state.roundTimer = null;
     this.state.reportedAnswers = [];
     this.state.invalidatedAnswers = [];
-    this.state.currentLetter = LETTERS[Math.floor(Math.random() * LETTERS.length)];
+    
+    let availableLetters = LETTERS.filter(l => !this.state.usedLetters.includes(l));
+    if (availableLetters.length === 0) {
+      this.state.usedLetters = [];
+      availableLetters = LETTERS;
+    }
+    const chosenLetter = availableLetters[Math.floor(Math.random() * availableLetters.length)];
+    this.state.currentLetter = chosenLetter;
+    this.state.usedLetters.push(chosenLetter);
     for (const p of Object.values(this.state.players)) {
       p.score += p.roundScore;
       p.roundScore = 0;
@@ -273,5 +317,6 @@ export default class CityStateServer implements Party.Server {
   broadcastState() {
     const msg: ServerMessage = { type: "state_update", state: this.state };
     this.room.broadcast(JSON.stringify(msg));
+    this.room.storage.put("gameState", this.state);
   }
 }
