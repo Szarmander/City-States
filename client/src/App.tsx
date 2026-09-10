@@ -41,7 +41,7 @@ function App() {
             <AudioPlayer currentTrack={currentTrack} musicPlaying={musicPlaying} />
             
             <header className="app-header">
-              <h1 className="main-title">Państwa-Miasta</h1>
+              <h1 className="main-title">City-states</h1>
               <div style={{ position: 'absolute', top: '1rem', right: '1rem', display: 'flex', gap: '0.5rem' }}>
                 <button 
                   className="btn btn-secondary btn-small" 
