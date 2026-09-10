@@ -64,6 +64,15 @@ function App() {
                 <Route path="/room/:roomId" element={<Room />} />
               </Routes>
             </main>
+
+            <a 
+              href="https://ko-fi.com/szarmander" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="kofi-button"
+            >
+              ☕ Ko-fi
+            </a>
           </div>
         </BrowserRouter>
       </LanguageContext.Provider>

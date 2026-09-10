@@ -681,3 +681,33 @@ button, input, select {
   align-items: center;
   justify-content: center;
 }
+
+.kofi-button {
+  position: fixed;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  right: max(20px, env(safe-area-inset-right));
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #29abe0;
+  color: white;
+  text-decoration: none;
+  border-radius: 24px;
+  border: 3px solid var(--border-color);
+  padding: 0.5rem 1.2rem;
+  font-family: 'Baloo 2', cursive, sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  box-shadow: 4px 4px 0px var(--border-color);
+  transition: transform 0.1s, box-shadow 0.1s;
+  z-index: 1000;
+}
+
+.kofi-button:hover {
+  filter: brightness(1.1);
+}
+
+.kofi-button:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px var(--border-color);
+}
